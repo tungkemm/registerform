@@ -1,3 +1,13 @@
+export const validateFullname = (text) => {
+  const checkSpecial = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+
+  if (text.replace(/[^0-9]/g, "").length > 0 ||  checkSpecial.test(text)) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 export const validateEmail = (text) => {
   const isEmail =
     /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i;

@@ -1,8 +1,23 @@
 import React from "react";
 
 const Button = (props) => {
-  const { type, content } = props;
-  return <button type={type}>{content}</button>;
+  const { type, content, width, color, backgroundColor, onClick } = props;
+  return (
+    <div style={{ textAlign: "center" }}>
+      <button
+        type={type}
+        className="button"
+        style={{
+          width: `${width}`,
+          color: `${color}`,
+          backgroundColor: `${backgroundColor}`,
+        }}
+        onClick={onClick}
+      >
+        {content}
+      </button>
+    </div>
+  );
 };
 
 export default Button;

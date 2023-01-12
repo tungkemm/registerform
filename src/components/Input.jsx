@@ -9,6 +9,7 @@ const Input = (props) => {
     setActiveIcon,
     value,
     onChange,
+    errFullname,
     errEmail,
     errUsername,
     errPassword,
@@ -23,6 +24,7 @@ const Input = (props) => {
         onChange={onChange}
       />
       <label>{label}</label>
+      {errFullname && <p>Fullname is not valid</p>}
       {errEmail && <p>Email is not valid</p>}
       {errUsername && <p>Username is not valid</p>}
       {errPassword && <p>Password is not strong</p>}

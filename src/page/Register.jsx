@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastError, ToastSuccess } from "../components/common/toast";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import {
+  validateFullname,
   validateEmail,
   validateUsername,
   validatePassword,
@@ -12,7 +13,7 @@ import {
 } from "../utils/validateRegister";
 
 const Register = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   // an hien icon password
   const [activePassword, setActivePassword] = useState(false);
   const [activeConfirmPassword, setActiveConfirmPassword] = useState(false);
@@ -24,56 +25,99 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
-  // const [infoRegister, setInfoRegister] = useState({});
 
   // validate form
+  const [errFullname, setErrFullname] = useState(false);
   const [errEmail, setErrEmail] = useState(false);
   const [errUsername, setErrUsername] = useState(false);
   const [errPassword, setErrPassword] = useState(false);
   const [errConfirmPassword, setErrConfirmPassword] = useState(false);
   const [errPhone, setErrPhone] = useState(false);
+  // const [dataRegister, setDataRegister] = useState([]);
+
+  const handleChangeFullname = (e) => {
+    setFullname(e.target.value);
+    if (e.target.value) {
+      validateFullname(e.target.value)
+        ? setErrFullname(true)
+        : setErrFullname(false);
+    } else {
+      setErrFullname(false);
+    }
+  };
 
   const handleChangeEmail = (e) => {
     setEmail(e.target.value);
-    validateEmail(e.target.value) ? setErrEmail(true) : setErrEmail(false);
+    if (e.target.value) {
+      validateEmail(e.target.value) ? setErrEmail(true) : setErrEmail(false);
+    } else {
+      setErrEmail(false);
+    }
   };
 
   const handleChangeUsername = (e) => {
     setUsername(e.target.value);
-    validateUsername(e.target.value)
-      ? setErrUsername(true)
-      : setErrUsername(false);
+    if (e.target.value) {
+      validateUsername(e.target.value)
+        ? setErrUsername(true)
+        : setErrUsername(false);
+    } else {
+      setErrUsername(false);
+    }
   };
 
   const handleChangePassword = (e) => {
     setPassword(e.target.value);
-    validatePassword(e.target.value)
-      ? setErrPassword(true)
-      : setErrPassword(false);
+    if (e.target.value) {
+      validatePassword(e.target.value)
+        ? setErrPassword(true)
+        : setErrPassword(false);
+    } else {
+      setErrPassword(false);
+    }
   };
 
   const handleChangeConfirmPassword = (e) => {
     setConfirmPassword(e.target.value);
-    validateConfirmPassword(password, e.target.value)
-      ? setErrConfirmPassword(true)
-      : setErrConfirmPassword(false);
+    if (e.target.value) {
+      validateConfirmPassword(password, e.target.value)
+        ? setErrConfirmPassword(true)
+        : setErrConfirmPassword(false);
+    } else {
+      setErrConfirmPassword(false);
+    }
   };
 
   const handleChangePhone = (e) => {
     setPhone(e.target.value);
-    validatePhone(e.target.value) ? setErrPhone(true) : setErrPhone(false);
+    if (e.target.value) {
+      validatePhone(e.target.value) ? setErrPhone(true) : setErrPhone(false);
+    } else {
+      setErrPhone(false);
+    }
   };
 
   const handleSubmitRegister = (e) => {
     e.preventDefault();
-    if (fullname && email && username && password && confirmPassword && phone) {
+    if (
+      !fullname ||
+      !email ||
+      !username ||
+      !password ||
+      !confirmPassword ||
+      !phone
+    ) {
+      ToastError("You don't enter enough infor");
+    } else {
       if (
-        !errEmail &&
-        !errUsername &&
-        !errPassword &&
-        !errConfirmPassword &&
-        !errPhone
+        errEmail ||
+        errUsername ||
+        errPassword ||
+        errConfirmPassword ||
+        errPhone
       ) {
+        ToastError("Information is invalid");
+      } else {
         console.log({
           fullname,
           email,
@@ -84,7 +128,7 @@ const Register = () => {
         });
 
         ToastSuccess("Register success !!!");
-        navigate("/login")
+        navigate("/login");
 
         setFullname("");
         setEmail("");
@@ -93,36 +137,33 @@ const Register = () => {
         setPassword("");
         setConfirmPassword("");
         setPhone("");
-      } else {
-        ToastError("Thong tin chua hop le");
       }
-    } else {
-      ToastError("Chua nhap day du thong tin");
     }
   };
 
   return (
     <div className="register-box">
-      <h2>Register</h2>
+      <h2>Sign up</h2>
       <form onSubmit={handleSubmitRegister}>
         <Input
           type="text"
           label="Full Name"
           value={fullname}
-          onChange={(e) => setFullname(e.target.value)}
+          onChange={handleChangeFullname}
+          errFullname={errFullname}
         />
         <Input
           type="text"
           label="Email"
-          onChange={handleChangeEmail}
           value={email}
+          onChange={handleChangeEmail}
           errEmail={errEmail}
         />
         <Input
           type="text"
           label="User Name"
-          onChange={handleChangeUsername}
           value={username}
+          onChange={handleChangeUsername}
           errUsername={errUsername}
         />
         <Input
@@ -131,8 +172,8 @@ const Register = () => {
           displayIcon
           activeIcon={activePassword}
           setActiveIcon={setActivePassword}
-          onChange={handleChangePassword}
           value={password}
+          onChange={handleChangePassword}
           errPassword={errPassword}
         />
         <Input
@@ -141,18 +182,24 @@ const Register = () => {
           displayIcon
           activeIcon={activeConfirmPassword}
           setActiveIcon={setActiveConfirmPassword}
-          onChange={handleChangeConfirmPassword}
           value={confirmPassword}
+          onChange={handleChangeConfirmPassword}
           errConfirmPassword={errConfirmPassword}
         />
         <Input
           type="text"
           label="Phone"
-          onChange={handleChangePhone}
           value={phone}
+          onChange={handleChangePhone}
           errPhone={errPhone}
         />
-        <Button type="submit" content="Submit" />
+        <Button
+          type="submit"
+          content="Register"
+          width="200px"
+          color="rgb(28, 30, 33)"
+          backgroundColor="var(--primary-color)"
+        />
       </form>
     </div>
   );
