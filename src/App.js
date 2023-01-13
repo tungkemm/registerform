@@ -5,7 +5,7 @@ import "./App.css";
 function App() {
   return (
     <div className="App">
-      <ToastContainer />
+      <ToastContainer limit={1} />
       <RouterPage />
     </div>
   );

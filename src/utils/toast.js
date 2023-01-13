@@ -27,7 +27,7 @@ export const ToastError = (message, time) => {
     transition: Slide,
     progress: undefined,
     closeOnClick: false,
-    theme: "light",
+    theme: "light"
   });
 };
 

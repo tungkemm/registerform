@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastError, ToastSuccess } from "../components/common/toast";
+import { v4 as uuidv4 } from "uuid";
+import { ToastError, ToastSuccess } from "../utils/toast";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import {
@@ -11,9 +12,15 @@ import {
   validateConfirmPassword,
   validatePhone,
 } from "../utils/validateRegister";
+import { useDispatch, useSelector } from "react-redux";
+import { addNewAccount, deleteStatusRegister } from "../features/slices/accountSlice";
+import { statusRegister } from "../features/selector";
+import Loading from "../components/Loading/Loading";
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const statusRegisterSelector = useSelector(statusRegister);
   // an hien icon password
   const [activePassword, setActivePassword] = useState(false);
   const [activeConfirmPassword, setActiveConfirmPassword] = useState(false);
@@ -27,119 +34,95 @@ const Register = () => {
   const [phone, setPhone] = useState("");
 
   // validate form
-  const [errFullname, setErrFullname] = useState(false);
-  const [errEmail, setErrEmail] = useState(false);
-  const [errUsername, setErrUsername] = useState(false);
-  const [errPassword, setErrPassword] = useState(false);
-  const [errConfirmPassword, setErrConfirmPassword] = useState(false);
-  const [errPhone, setErrPhone] = useState(false);
-  // const [dataRegister, setDataRegister] = useState([]);
+  const [errFullname, setErrFullname] = useState("");
+  const [errEmail, setErrEmail] = useState("");
+  const [errUsername, setErrUsername] = useState("");
+  const [errPassword, setErrPassword] = useState("");
+  const [errConfirmPassword, setErrConfirmPassword] = useState("");
+  const [errPhone, setErrPhone] = useState("");
+
+  // console.log(statusRegisterSelector)
 
   const handleChangeFullname = (e) => {
     setFullname(e.target.value);
-    if (e.target.value) {
-      validateFullname(e.target.value)
-        ? setErrFullname(true)
-        : setErrFullname(false);
-    } else {
-      setErrFullname(false);
-    }
+    setErrFullname(validateFullname(e.target.value));
   };
 
   const handleChangeEmail = (e) => {
     setEmail(e.target.value);
-    if (e.target.value) {
-      validateEmail(e.target.value) ? setErrEmail(true) : setErrEmail(false);
-    } else {
-      setErrEmail(false);
-    }
+    setErrEmail(validateEmail(e.target.value));
   };
 
   const handleChangeUsername = (e) => {
     setUsername(e.target.value);
-    if (e.target.value) {
-      validateUsername(e.target.value)
-        ? setErrUsername(true)
-        : setErrUsername(false);
-    } else {
-      setErrUsername(false);
-    }
+    setErrUsername(validateUsername(e.target.value));
   };
 
   const handleChangePassword = (e) => {
     setPassword(e.target.value);
-    if (e.target.value) {
-      validatePassword(e.target.value)
-        ? setErrPassword(true)
-        : setErrPassword(false);
-    } else {
-      setErrPassword(false);
-    }
+    setErrPassword(validatePassword(e.target.value));
   };
 
   const handleChangeConfirmPassword = (e) => {
     setConfirmPassword(e.target.value);
-    if (e.target.value) {
-      validateConfirmPassword(password, e.target.value)
-        ? setErrConfirmPassword(true)
-        : setErrConfirmPassword(false);
-    } else {
-      setErrConfirmPassword(false);
-    }
+    setErrConfirmPassword(validateConfirmPassword(password, e.target.value));
   };
 
   const handleChangePhone = (e) => {
     setPhone(e.target.value);
-    if (e.target.value) {
-      validatePhone(e.target.value) ? setErrPhone(true) : setErrPhone(false);
-    } else {
-      setErrPhone(false);
-    }
+    setErrPhone(validatePhone(e.target.value));
   };
 
   const handleSubmitRegister = (e) => {
     e.preventDefault();
     if (
-      !fullname ||
-      !email ||
-      !username ||
-      !password ||
-      !confirmPassword ||
-      !phone
+      validateFullname(fullname) ||
+      validateEmail(email) ||
+      validateUsername(username) ||
+      validatePassword(password) ||
+      validateConfirmPassword(password, confirmPassword) ||
+      validatePhone(phone)
     ) {
-      ToastError("You don't enter enough infor");
+      setErrFullname(validateFullname(fullname));
+      setErrEmail(validateEmail(email));
+      setErrUsername(validateUsername(username));
+      setErrPassword(validatePassword(password));
+      setErrConfirmPassword(validateConfirmPassword(password, confirmPassword));
+      setErrPhone(validatePhone(phone));
+      ToastError("Dang ky khong thanh cong !!!");
     } else {
-      if (
-        errEmail ||
-        errUsername ||
-        errPassword ||
-        errConfirmPassword ||
-        errPhone
-      ) {
-        ToastError("Information is invalid");
-      } else {
-        console.log({
+      dispatch(
+        addNewAccount({
+          id: uuidv4(),
           fullname,
           email,
           username,
           password,
-          confirmPassword,
           phone,
-        });
+        })
+      );
 
-        ToastSuccess("Register success !!!");
-        navigate("/login");
-
-        setFullname("");
-        setEmail("");
-        setUsername("");
-        setFullname("");
-        setPassword("");
-        setConfirmPassword("");
-        setPhone("");
-      }
+      setFullname("");
+      setEmail("");
+      setUsername("");
+      setPassword("");
+      setConfirmPassword("");
+      setPhone("");
     }
   };
+
+  useEffect(() => {
+    return () => {
+      dispatch(deleteStatusRegister())
+    }
+  }, [])
+  
+  useEffect(() => {
+    if (statusRegisterSelector === "success") {
+      navigate("/login");
+      ToastSuccess("Dang ky thanh cong !!!");
+    }
+  }, [statusRegisterSelector]);
 
   return (
     <div className="register-box">
@@ -150,21 +133,21 @@ const Register = () => {
           label="Full Name"
           value={fullname}
           onChange={handleChangeFullname}
-          errFullname={errFullname}
+          msgValidate={errFullname}
         />
         <Input
           type="text"
           label="Email"
           value={email}
           onChange={handleChangeEmail}
-          errEmail={errEmail}
+          msgValidate={errEmail}
         />
         <Input
           type="text"
           label="User Name"
           value={username}
           onChange={handleChangeUsername}
-          errUsername={errUsername}
+          msgValidate={errUsername}
         />
         <Input
           type="password"
@@ -174,7 +157,7 @@ const Register = () => {
           setActiveIcon={setActivePassword}
           value={password}
           onChange={handleChangePassword}
-          errPassword={errPassword}
+          msgValidate={errPassword}
         />
         <Input
           type="password"
@@ -184,14 +167,14 @@ const Register = () => {
           setActiveIcon={setActiveConfirmPassword}
           value={confirmPassword}
           onChange={handleChangeConfirmPassword}
-          errConfirmPassword={errConfirmPassword}
+          msgValidate={errConfirmPassword}
         />
         <Input
           type="text"
           label="Phone"
           value={phone}
           onChange={handleChangePhone}
-          errPhone={errPhone}
+          msgValidate={errPhone}
         />
         <Button
           type="submit"
@@ -201,6 +184,7 @@ const Register = () => {
           backgroundColor="var(--primary-color)"
         />
       </form>
+      {statusRegisterSelector === "loading" && <Loading />}
     </div>
   );
 };

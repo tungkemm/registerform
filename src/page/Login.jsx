@@ -1,21 +1,31 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ToastError, ToastSuccess } from "../utils/toast";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import { ToastError, ToastLoading } from "../components/common/toast";
 
 const Login = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmitLogin = (e) => {
     e.preventDefault();
-    if (!username || !password) {
-      ToastError("You don't enter enough infor");
-    } else {
-      ToastLoading("Please wait a second");
-    }
+    ToastError('Cho ti')
+    // if (validateUsername(username) || validatePassword(password)) {
+    //   setErrUsername(validateUsername(username));
+    //   setErrPassword(validatePassword(password));
+    //   ToastError("Dang nhap khong thanh cong !!!");
+    // } else {
+    //   console.log({
+    //     username,
+    //     password,
+    //   });
+
+    //   ToastSuccess("Dang nhap thanh cong !!!");
+    //   setUsername("");
+    //   setPassword("");
+    // }
   };
 
   return (
