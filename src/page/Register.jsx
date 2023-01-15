@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { ToastError, ToastSuccess } from "../utils/toast";
-import Button from "../components/Button";
-import Input from "../components/Input";
+import Button from "../components/button/Button";
+import Input from "../components/input/Input";
 import {
   validateFullname,
   validateEmail,
@@ -13,14 +13,18 @@ import {
   validatePhone,
 } from "../utils/validateRegister";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewAccount, deleteStatusRegister } from "../features/slices/accountSlice";
+import {
+  addNewAccount,
+  resetStatusRegister,
+} from "../features/slices/accountSlice";
 import { statusRegister } from "../features/selector";
-import Loading from "../components/Loading/Loading";
+import { finishedLoading, loading } from "../features/slices/loadingSlice";
 
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const statusRegisterSelector = useSelector(statusRegister);
+
   // an hien icon password
   const [activePassword, setActivePassword] = useState(false);
   const [activeConfirmPassword, setActiveConfirmPassword] = useState(false);
@@ -40,8 +44,6 @@ const Register = () => {
   const [errPassword, setErrPassword] = useState("");
   const [errConfirmPassword, setErrConfirmPassword] = useState("");
   const [errPhone, setErrPhone] = useState("");
-
-  // console.log(statusRegisterSelector)
 
   const handleChangeFullname = (e) => {
     setFullname(e.target.value);
@@ -112,17 +114,25 @@ const Register = () => {
   };
 
   useEffect(() => {
-    return () => {
-      dispatch(deleteStatusRegister())
+    if (statusRegisterSelector === "loading") {
+      dispatch(loading());
     }
-  }, [])
-  
-  useEffect(() => {
     if (statusRegisterSelector === "success") {
-      navigate("/login");
+      dispatch(finishedLoading());
       ToastSuccess("Dang ky thanh cong !!!");
+      navigate("/login");
     }
-  }, [statusRegisterSelector]);
+    if (statusRegisterSelector === "failure") {
+      dispatch(finishedLoading());
+      ToastError("Khong the ket noi voi server !!!");
+    }
+  }, [dispatch, navigate, statusRegisterSelector]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetStatusRegister());
+    };
+  }, [dispatch]);
 
   return (
     <div className="register-box">
@@ -184,7 +194,6 @@ const Register = () => {
           backgroundColor="var(--primary-color)"
         />
       </form>
-      {statusRegisterSelector === "loading" && <Loading />}
     </div>
   );
 };

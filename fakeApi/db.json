@@ -103,6 +103,30 @@
       "username": "tungkem",
       "password": "Tung@2000",
       "phone": "0328394504"
+    },
+    {
+      "id": "c62b5733-9909-454b-8323-7e52b79b7a3a",
+      "fullname": "Nguyenx Danh Tung",
+      "email": "tung@gmail.com",
+      "username": "tungkem",
+      "password": "Tung@2000",
+      "phone": "0328394504"
+    },
+    {
+      "id": "e5af7183-aac1-4beb-b772-a26b7c8a1d0c",
+      "fullname": "Nguyen Danh Tung",
+      "email": "kem@gmail.com",
+      "username": "hahaha",
+      "password": "Tung@2000!",
+      "phone": "0328394504"
+    },
+    {
+      "id": "bd207d69-e2eb-4baa-a620-5cc0e9f6f5a9",
+      "fullname": "Hi",
+      "email": "hihi@gmail.com",
+      "username": "hehehe",
+      "password": "He@20000",
+      "phone": "0328583858"
     }
   ]
 }

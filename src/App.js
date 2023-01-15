@@ -1,11 +1,13 @@
 import RouterPage from "./routes/RouterPage";
 import { ToastContainer } from "react-toastify";
 import "./App.css";
+import Loading from "./components/loading/Loading";
 
 function App() {
   return (
     <div className="App">
-      <ToastContainer limit={1} />
+      <Loading />
+      <ToastContainer />
       <RouterPage />
     </div>
   );

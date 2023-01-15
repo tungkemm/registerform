@@ -15,11 +15,11 @@ const initialState = {
 // POST data register
 export const addNewAccount = createAsyncThunk(
   "account/addNewAccount",
-  async (newaccount) => {
+  async (newaccount, { rejectWithValue }) => {
     try {
       await axios.post("http://localhost:4000/listaccount", newaccount);
     } catch (error) {
-      console.error("loi call api khi add new account", error);
+      rejectWithValue(error.response.data);
     }
   }
 );
@@ -40,7 +40,7 @@ export const accountSlice = createSlice({
 
   reducers: {
     //
-    deleteStatusRegister: (state) => {
+    resetStatusRegister: (state) => {
       state.accountRegister.status = "";
     },
     // current account
@@ -66,6 +66,9 @@ export const accountSlice = createSlice({
       .addCase(addNewAccount.fulfilled, (state) => {
         state.accountRegister.status = "success";
       })
+      .addCase(addNewAccount.rejected, (state) => {
+        state.accountRegister.status = "failure";
+      })
 
       // Get list account
       .addCase(getAccount.pending, (state) => {
@@ -78,6 +81,7 @@ export const accountSlice = createSlice({
   },
 });
 
-export const {deleteStatusRegister, getCurrentAccount, deleteCurrentAccount } = accountSlice.actions;
+export const { deleteStatusRegister, getCurrentAccount, resetStatusRegister } =
+  accountSlice.actions;
 
 export default accountSlice.reducer;

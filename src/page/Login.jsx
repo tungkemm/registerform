@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastError, ToastSuccess } from "../utils/toast";
-import Button from "../components/Button";
-import Input from "../components/Input";
+import Button from "../components/button/Button";
+import Input from "../components/input/Input";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const Login = () => {
 
   const handleSubmitLogin = (e) => {
     e.preventDefault();
-    ToastError('Cho ti')
+    ToastError('Hehe')
     // if (validateUsername(username) || validatePassword(password)) {
     //   setErrUsername(validateUsername(username));
     //   setErrPassword(validatePassword(password));
