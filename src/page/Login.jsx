@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastError, ToastSuccess } from "../utils/toast";
+import { ToastSuccess, ToastError } from "../utils/toast";
 import Button from "../components/button/Button";
 import Input from "../components/input/Input";
 
@@ -12,20 +12,6 @@ const Login = () => {
   const handleSubmitLogin = (e) => {
     e.preventDefault();
     ToastError('Hehe')
-    // if (validateUsername(username) || validatePassword(password)) {
-    //   setErrUsername(validateUsername(username));
-    //   setErrPassword(validatePassword(password));
-    //   ToastError("Dang nhap khong thanh cong !!!");
-    // } else {
-    //   console.log({
-    //     username,
-    //     password,
-    //   });
-
-    //   ToastSuccess("Dang nhap thanh cong !!!");
-    //   setUsername("");
-    //   setPassword("");
-    // }
   };
 
   return (

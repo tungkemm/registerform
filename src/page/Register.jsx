@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
 import { ToastError, ToastSuccess } from "../utils/toast";
 import Button from "../components/button/Button";
 import Input from "../components/input/Input";
@@ -15,15 +14,15 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {
   addNewAccount,
-  resetStatusRegister,
+  resetAccountRegister,
 } from "../features/slices/accountSlice";
-import { statusRegister } from "../features/selector";
+import { register } from "../features/selector";
 import { finishedLoading, loading } from "../features/slices/loadingSlice";
 
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const statusRegisterSelector = useSelector(statusRegister);
+  const registerSelector = useSelector(register);
 
   // an hien icon password
   const [activePassword, setActivePassword] = useState(false);
@@ -91,11 +90,10 @@ const Register = () => {
       setErrPassword(validatePassword(password));
       setErrConfirmPassword(validateConfirmPassword(password, confirmPassword));
       setErrPhone(validatePhone(phone));
-      ToastError("Dang ky khong thanh cong !!!");
+      ToastError("Thong tin chua day du hoac chua hop le !!!");
     } else {
       dispatch(
         addNewAccount({
-          id: uuidv4(),
           fullname,
           email,
           username,
@@ -114,23 +112,27 @@ const Register = () => {
   };
 
   useEffect(() => {
-    if (statusRegisterSelector === "loading") {
+    if (registerSelector.status === "loading") {
       dispatch(loading());
     }
-    if (statusRegisterSelector === "success") {
+    if (registerSelector.status === "success") {
       dispatch(finishedLoading());
-      ToastSuccess("Dang ky thanh cong !!!");
-      navigate("/login");
+      if (registerSelector.data.status) {
+        ToastSuccess(registerSelector.data.message);
+        navigate("/login");
+      } else {
+        ToastError(registerSelector.data.message);
+      }
     }
-    if (statusRegisterSelector === "failure") {
+    if (registerSelector.status === "failure") {
       dispatch(finishedLoading());
       ToastError("Khong the ket noi voi server !!!");
     }
-  }, [dispatch, navigate, statusRegisterSelector]);
+  }, [dispatch, navigate, registerSelector]);
 
   useEffect(() => {
     return () => {
-      dispatch(resetStatusRegister());
+      dispatch(resetAccountRegister());
     };
   }, [dispatch]);
 
