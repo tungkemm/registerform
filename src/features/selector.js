@@ -4,4 +4,5 @@
 export const loading = (state) => state.loading.isLoading;
 
 //// account
-export const register = (state) => state.account.accountRegister
+export const register = (state) => state.account.accountRegister;
+export const login = (state) => state.account.accountLogin;

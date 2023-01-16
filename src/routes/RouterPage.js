@@ -8,7 +8,7 @@ import Notfound from "../page/Notfound";
 const RouterPage = () => {
   let Routes = useRoutes([
     {
-      path: "/",
+      path: "/home",
       element: <Home />,
     },
     {

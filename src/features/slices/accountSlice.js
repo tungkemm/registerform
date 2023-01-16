@@ -4,19 +4,15 @@ import axios from "axios";
 const initialState = {
   accountRegister: {
     status: "",
-    data: {
-      status: "",
-      message: "",
-    },
+    data: {},
   },
   accountLogin: {
-    // listAccount: [],
-    // statusGetListAccount: "idle",
-    // currentAccount: {},
+    status: "",
+    data: {},
   },
 };
 
-// POST data register
+// POST data when register
 export const addNewAccount = createAsyncThunk(
   "account/addNewAccount",
   async (newaccount, { rejectWithValue }) => {
@@ -32,15 +28,21 @@ export const addNewAccount = createAsyncThunk(
   }
 );
 
-// GET list account
-// export const getAccount = createAsyncThunk("account/getAccount", async () => {
-//   try {
-//     const response = await axios.get("http://localhost:4000/listaccount");
-//     return response.data;
-//   } catch (error) {
-//     console.error("loi call api khi get list account", error);
-//   }
-// });
+// POST data when login
+export const addAccountLogin = createAsyncThunk(
+  "account/addAccountLogin",
+  async (infoaccount, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/account/login",
+        infoaccount
+      );
+      return response.data;
+    } catch (error) {
+      rejectWithValue(error.response.data);
+    }
+  }
+);
 
 export const accountSlice = createSlice({
   name: "account",
@@ -50,7 +52,10 @@ export const accountSlice = createSlice({
     //
     resetAccountRegister: (state) => {
       state.accountRegister.status = "";
-      state.accountRegister.data = { status: "", message: "" };
+      state.accountRegister.data = {};
+    },
+    resetStatusAccountLogin: (state) => {
+      state.accountLogin.status = "";
     },
   },
 
@@ -66,20 +71,23 @@ export const accountSlice = createSlice({
       })
       .addCase(addNewAccount.rejected, (state) => {
         state.accountRegister.status = "failure";
-      });
+      })
 
-    // Get list account
-    // .addCase(getAccount.pending, (state) => {
-    //   state.accountLogin.statusGetListAccount = "loading";
-    // })
-    // .addCase(getAccount.fulfilled, (state, action) => {
-    //   state.accountLogin.listAccount = action.payload;
-    //   state.accountLogin.statusGetListAccount = "success";
-    // });
+      // Login
+      .addCase(addAccountLogin.pending, (state) => {
+        state.accountLogin.status = "loading";
+      })
+      .addCase(addAccountLogin.fulfilled, (state, action) => {
+        state.accountLogin.status = "success";
+        state.accountLogin.data = action.payload;
+      })
+      .addCase(addAccountLogin.rejected, (state) => {
+        state.accountLogin.status = "failure";
+      });
   },
 });
 
-export const { deleteStatusRegister, getCurrentAccount, resetAccountRegister } =
+export const { resetAccountRegister, resetStatusAccountLogin } =
   accountSlice.actions;
 
 export default accountSlice.reducer;

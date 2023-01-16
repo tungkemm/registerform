@@ -1,18 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastSuccess, ToastError } from "../utils/toast";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "../components/button/Button";
 import Input from "../components/input/Input";
+import { ToastSuccess, ToastError } from "../utils/toast";
+import {
+  addAccountLogin,
+  resetStatusAccountLogin,
+} from "../features/slices/accountSlice";
+import { login } from "../features/selector";
+import { finishedLoading, loading } from "../features/slices/loadingSlice";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const loginSelector = useSelector(login);
+
+  // value input
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  // an hien icon password
+  const [activePassword, setActivePassword] = useState(false);
+
   const handleSubmitLogin = (e) => {
     e.preventDefault();
-    ToastError('Hehe')
+    dispatch(
+      addAccountLogin({
+        username,
+        password,
+      })
+    );
+
+    setUsername("");
+    setPassword("");
   };
+
+  useEffect(() => {
+    if (loginSelector.status === "loading") {
+      dispatch(loading());
+    }
+    if (loginSelector.status === "success") {
+      dispatch(finishedLoading());
+      if (loginSelector.data.status === 200) {
+        ToastSuccess(loginSelector.data.message);
+        navigate("/home");
+      }
+      if (
+        loginSelector.data.status === 404 ||
+        loginSelector.data.status === 500
+      ) {
+        ToastError(loginSelector.data.message);
+      }
+    }
+    if (loginSelector.status === "failure") {
+      dispatch(finishedLoading());
+      ToastError("Khong the ket noi voi server !!!");
+    }
+  }, [dispatch, loginSelector, navigate]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetStatusAccountLogin());
+    };
+  }, [dispatch]);
 
   return (
     <div className="login-box">
@@ -25,10 +76,13 @@ const Login = () => {
           onChange={(e) => setUsername(e.target.value)}
         />
         <Input
-          type="text"
+          type="password"
           label="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          displayIcon
+          activeIcon={activePassword}
+          setActiveIcon={setActivePassword}
         />
 
         <Button

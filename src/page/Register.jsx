@@ -117,10 +117,14 @@ const Register = () => {
     }
     if (registerSelector.status === "success") {
       dispatch(finishedLoading());
-      if (registerSelector.data.status) {
+      if (registerSelector.data.status === 200) {
         ToastSuccess(registerSelector.data.message);
         navigate("/login");
-      } else {
+      }
+      if (
+        registerSelector.data.status === 400 ||
+        registerSelector.data.status === 500
+      ) {
         ToastError(registerSelector.data.message);
       }
     }
