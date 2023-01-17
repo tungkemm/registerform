@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { loading } from "../../features/selector";
+import { loading } from "../../../features/selector";
 import "./Loading.css";
 
 export default function Loading() {
