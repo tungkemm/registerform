@@ -1,27 +1,27 @@
 import React from "react";
 import { useRoutes } from "react-router-dom";
-import Home from "../page/Home";
-import Register from "../page/Register";
-import Login from "../page/Login";
-import Notfound from "../page/Notfound";
+import HomePage from "../page/HomePage";
+import RegisterPage from "../page/RegisterPage";
+import LoginPage from "../page/LoginPage";
+import NotfoundPage from "../page/NotfoundPage";
 
 const RouterPage = () => {
   let Routes = useRoutes([
     {
       path: "/home",
-      element: <Home />,
+      element: <HomePage />,
     },
     {
       path: "/register",
-      element: <Register />,
+      element: <RegisterPage />,
     },
     {
       path: "/login",
-      element: <Login />,
+      element: <LoginPage />,
     },
     {
       path: "*",
-      element: <Notfound />,
+      element: <NotfoundPage />,
     },
   ]);
 
